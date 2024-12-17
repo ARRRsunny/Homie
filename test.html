@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Server Test Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+        }
+        .endpoint {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .endpoint h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .endpoint label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .endpoint input, .endpoint textarea, .endpoint button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .endpoint button {
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .endpoint button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flask Server Test Interface</h1>
+
+    <!-- Test /send_query -->
+    <div class="endpoint">
+        <h2>Send Query to AI</h2>
+        <label for="user_input">User Input:</label>
+        <textarea id="user_input" placeholder="Enter your query here..."></textarea>
+        <button onclick="sendQuery()">Send Query</button>
+        <div class="result" id="send_query_result"></div>
+    </div>
+
+    <!-- Test /get_state -->
+    <div class="endpoint">
+        <h2>Get Latest Furniture State</h2>
+        <button onclick="getFurnitureState()">Get State</button>
+        <div class="result" id="get_state_result"></div>
+    </div>
+
+    <!-- Test /update_sensor -->
+    <div class="endpoint">
+        <h2>Update Sensor Data</h2>
+        <label for="temperature">Temperature:</label>
+        <input type="number" id="temperature" placeholder="Enter temperature (e.g., 22.5)">
+        <label for="humidity">Humidity:</label>
+        <input type="number" id="humidity" step="0.01" placeholder="Enter humidity (e.g., 0.45)">
+        <button onclick="updateSensor()">Update Sensor</button>
+        <div class="result" id="update_sensor_result"></div>
+    </div>
+
+    <!-- Test /upload_photo -->
+    <div class="endpoint">
+        <h2>Upload Photo</h2>
+        <input type="file" id="photo">
+        <button onclick="uploadPhoto()">Upload Photo</button>
+        <div class="result" id="upload_photo_result"></div>
+    </div>
+
+    <!-- Test / -->
+    <div class="endpoint">
+        <h2>Check Server Status</h2>
+        <button onclick="checkServer()">Check Status</button>
+        <div class="result" id="server_status_result"></div>
+    </div>
+
+    <script>
+        const API_URL = "http://192.168.0.153:5000"; // Change this to your server's URL if needed
+
+        async function sendQuery() {
+            const userInput = document.getElementById("user_input").value;
+            const response = await fetch(`${API_URL}/send_query`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_input: userInput })
+            });
+            const result = await response.json();
+            document.getElementById("send_query_result").textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function getFurnitureState() {
+            const response = await fetch(`${API_URL}/get_state`, { method: "GET" });
+            const result = await response.json();
+            document.getElementById("get_state_result").textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function updateSensor() {
+            const temperature = parseFloat(document.getElementById("temperature").value);
+            const humidity = parseFloat(document.getElementById("humidity").value);
+            const response = await fetch(`${API_URL}/update_sensor`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sensor_data: { temperature, humidity } })
+            });
+            const result = await response.json();
+            document.getElementById("update_sensor_result").textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function uploadPhoto() {
+            const photo = document.getElementById("photo").files[0];
+            const formData = new FormData();
+            formData.append("photo", photo);
+
+            const response = await fetch(`${API_URL}/upload_photo`, {
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById("upload_photo_result").textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function checkServer() {
+            const response = await fetch(`${API_URL}/`, { method: "GET" });
+            const result = await response.json();
+            document.getElementById("server_status_result").textContent = JSON.stringify(result, null, 2);
+        }
+    </script>
+</body>
+</html>

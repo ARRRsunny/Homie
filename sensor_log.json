@@ -10,5 +10,13 @@
     {
         "temperature": 25,
         "humidity": 0.5
+    },
+    {
+        "temperature": 23,
+        "humidity": 0.33
+    },
+    {
+        "temperature": 24,
+        "humidity": 0.11
     }
 ]
