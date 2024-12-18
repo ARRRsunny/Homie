@@ -168,12 +168,16 @@ def construct_prompt(user_input: str, furniture_state: Dict, sensor_value: Dict,
     cap_description_str = f"\n-Camera image description: {cap_description}" if cap_description else ""
     return f"-User input: {user_input}{furniture_state_str}{sensor_value_str}{cap_description_str}\nPlease make an appropriate furniture control."
 
+def trim_history(history):
+    if len(history) > 5:
+        # Keep the first (initial prompt) and the last 5 entries
+        return [history[0]] + history[-5:]
+    return history
 
 #main user request
 @app.route('/send_query', methods=['POST'])
 def send_query():
     """Endpoint to send a user query and process it with the AI model."""
-
     try:
         global history
         data = request.json
@@ -189,19 +193,24 @@ def send_query():
         logging.debug(prompt)
         response = send_query_to_model(prompt, history)
         logging.debug(response)
+
+        # Trim history to keep only the initial prompt and the last 5 entries
+        history.append({'role': 'user', 'content': user_input})
+        history = trim_history(history)
+
         extracted_result = extract_content_inside_braces(response)
         if validate_json_format(extracted_result):
             furniture_state = json.loads(extracted_result)
             logging.debug(extracted_result)
             add_furniture_state_to_log(FURNITURE_LOG_PATH, furniture_state)
-            return jsonify({"message": "New data add to control"}), 200
+            return jsonify({"message": "New data added to control"}), 200
         else:
             return jsonify({"error": "Model response is not a valid JSON format."}), 500
 
     except Exception as e:
         logging.error(f"Error processing query: {e}")
         return jsonify({"error": str(e)}), 500
-
+    
 #fetch furniture state
 @app.route('/get_state', methods=['GET'])
 def send_furniture_state():
@@ -298,4 +307,4 @@ def setup():
 # Run the Flask server
 if __name__ == "__main__":    
     setup()
-    app.run(host="192.168.0.153", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
