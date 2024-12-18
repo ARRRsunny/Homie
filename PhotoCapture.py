@@ -5,10 +5,10 @@ import requests
 import os
 import time
 
-def predicting(model, frame, processed_frame_file_address, conf = 0.7, marks=[], generate = False, corner = False, classes=[]):   
+def predicting(model, frame, processed_frame_file_address, conf = 0.7, marks=[], generate = False, corner = False, classes=[]):  
     results = model.predict(frame, conf=conf,classes=classes)
     if not results:
-        pass
+        return False
     else:
 
         for result in results:
@@ -20,14 +20,14 @@ def predicting(model, frame, processed_frame_file_address, conf = 0.7, marks=[],
 
         if generate:
             generating(frame, marks, processed_frame_file_address,corner)
-
-def uploading(address, frame_name, processed_frame_file_address, sub_folder_list=[]):
+        return True
+def uploading(address, frame_name, processed_frame_file_address, sub_folder):
 
     try:
 
         with open(f"{processed_frame_file_address}/{frame_name}", 'rb') as img_file:
             img_response = requests.post(
-                f"{address}/{sub_folder_list[0]}", 
+                f"{address}/{sub_folder}", 
                 files={'photo': img_file})      
             
         print(img_response, img_response.text)
@@ -55,31 +55,32 @@ def generating(frame, marks, processed_frame_file_address, corner=False):
 
 ###########################################################################################################
 
-## For images ### 
-
-model = YOLO("yolo11m.pt")
-processed_file_address = "Images/Processed"
-img = cv.imread("Images\Test\Images.jpg")
-add = "Images/Processed"
-classes = [0]
-IP_address = "http://42.2.115.185:5000"
-sub_folder_list = ["upload_photo"]
-frame_name = "cropped_region_no.0--person.jpg"
-predicting(model, img, add, generate=True,conf=0.4,classes=classes)
-uploading(IP_address, frame_name, processed_file_address, sub_folder_list)
-
-##########################################################################################################
-
-## For video ###
+### For images ### 
 
 # model = YOLO("yolo11m.pt")
 # processed_file_address = "Images/Processed"
-# camera = cv.VideoCapture("Images\Test\handsome.mp4")
+# img = cv.imread("Images\Test\Images.jpg")
+# add = "Images/Processed"
+# classes = [0]
+# IP_address = " " # Your IP address + port 
+# sub_folder = " " # Subname of your website
+# frame_name = "cropped_region_no.0--person.jpg"
+# upload = predicting(model, img, add, generate=True,conf=0.4,classes=classes)
+# if upload:
+#     uploading(IP_address, frame_name, processed_file_address, sub_folder)
+
+##########################################################################################################
+
+### For video ###
+
+# model = YOLO("yolo11m.pt")
+# processed_file_address = "Images/Processed"
+# camera = cv.VideoCapture(0) # Your capture device
 # classes = [0]
 # counting = False
 # init_time = time.time()
-# IP_address = "http://42.2.115.185:5000"
-# sub_folder_list = ["upload_photo"]
+# IP_address = " " # Your IP address + port 
+# sub_folder = " " # Subname of your website
 # frame_name = "cropped_region_no.0--person.jpg"
 # while True:
 
@@ -87,8 +88,9 @@ uploading(IP_address, frame_name, processed_file_address, sub_folder_list)
 #     if not ret:
 #         break
 #     if time.time() - init_time >= 5:  
-#         predicting(model, frame, processed_file_address, generate=True, conf=0.4)
-#         uploading(IP_address, frame_name, processed_file_address, sub_folder_list)
+#         upload = predicting(model, frame, processed_file_address, generate=True, conf=0.4)
+#         if upload:
+#             uploading(IP_address, frame_name, processed_file_address, sub_folder)
 #         init_time = time.time() 
         
 
