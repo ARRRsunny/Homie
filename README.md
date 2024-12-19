@@ -1,107 +1,109 @@
-# Homie - Smart AI Home Assistant  
+# Homie: IoT Furniture Control System  
 
-## Overview  
-
-**Homie** is an advanced AI-powered home assistant designed to analyze various data inputs and control IoT-enabled furniture in a smart home. Homie ensures optimal comfort, convenience, and energy efficiency by dynamically adjusting furniture states based on sensor data, camera image descriptions, and user preferences.
+Homie is an AI-powered system that integrates IoT-enabled furniture, environmental sensors, and image analysis to optimize user comfort, well-being, and energy efficiency. By leveraging advanced prompt engineering techniques and machine learning models, Homie intelligently analyzes user inputs, environmental data, and visual inputs to guide furniture control decisions.  
 
 ---
 
 ## Features  
 
-1. **Role-based Functionality**  
-   Homie operates as an intelligent system that manages IoT furniture in a home. It evaluates multiple inputs and determines the most appropriate ON/OFF states or specific settings for each piece of furniture.  
+- **Dynamic Furniture Control**:  
+  Homie processes user input and dynamically adjusts furniture states based on sensor data, image analysis, and user preferences.  
 
-2. **Multi-source Input Analysis**  
-   - **Sensor Data**: Includes temperature, humidity, motion detection, pressure sensors, light levels, and noise levels.  
-   - **Camera Image Description**: Determines user activity and room state based on visual input (e.g., "The user is lying on the bed and reading.").  
-   - **User Profile**: Incorporates age, gender, weight, height, and personalized preferences, such as desired temperature or lighting conditions.  
-   - **IoT Furniture List**: A predefined list of IoT-enabled furniture that Homie can control.  
+- **Sensor Integration**:  
+  Supports temperature and humidity sensors to track environmental conditions and adjust accordingly.  
 
-3. **Task Automation**  
-   Homie analyzes inputs to automatically determine the optimal state for each piece of furniture. The goal is to enhance user comfort and well-being while maintaining energy efficiency.  
+- **Image Analysis**:  
+  Analyzes uploaded images to gain insights into the surrounding environment and assist in decision-making.  
 
-4. **Structured Output**  
-   Homie generates outputs in a consistent JSON format, making it easy to integrate with other systems or log results.  
+- **AI Interaction**:  
+  Uses advanced prompt engineering techniques to interact with AI models for data analysis and decision-making.  
 
----
+- **JSON Logging**:  
+  Logs all furniture state changes and sensor updates in JSON format for transparency and tracking.  
 
-## Installation  
-
-To run Homie, ensure you have the necessary dependencies installed.  
-
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/your-repo/homie-ai.git
-   cd homie-ai
-   ```  
-
-2. Install required Python dependencies:  
-   ```bash
-   pip install -r requirements.txt
-   ```  
-
-3. Ensure you have the following files in the project directory:  
-   - `prompt.txt`: Contains the main prompt for the AI model.  
-   - `furniturelist.txt`: Specifies the list of IoT-enabled furniture.  
-   - `userprofile.txt`: Stores user profile details.  
-   - `CapAnalyzePrompt.txt`: Contains the vision model prompt for image analysis.  
-
-4. Place the camera image (`cap.jpg`) in the directory for analysis.  
+- **RESTful API**:  
+  Provides a user-friendly API for querying, updating, and uploading data.  
 
 ---
 
-## How Homie Works  
+## API Endpoints  
 
-### Input Data Sources  
+### **1. `/send_query` (POST)**  
+**Description:** Processes user input and sends it to the AI model for decision-making.  
 
-- **Sensor Data**: Provides real-time environmental conditions and activity-related values.  
-- **Camera Image Description**: Captures the current state of the room and user activity.  
-- **User Profile**: Personalizes settings based on user preferences.  
-- **Furniture Log**: Tracks the historical state of IoT furniture.  
-
-### Decision-making Process  
-
-1. **Input Analysis**:  
-   Homie evaluates sensor data, analyzes the camera image description, and considers user preferences.  
-
-2. **Task Execution**:  
-   Based on the analysis, Homie determines the ON/OFF state or specific settings for each IoT-enabled furniture item.  
-
-3. **Output**:  
-   Homie generates a JSON response representing the control states for all furniture.  
-
-### Example Input  
-
-- **Sensor Data**: `{"Temperature": "38°C", "Humidity": "55%", "Motion": "Detected near recliner"}`  
-- **Camera Image Description**: `"The user is reclining and watching TV."`  
-- **User Profile**:  
+- **Request Body:**  
   ```json
   {
-    "Age": 35,
-    "Gender": "Male",
-    "Weight": 80,
-    "Preferences": {
-      "Lighting": "Dim",
-      "Temperature": "Cool"
-    }
+      "user_input": "Adjust the furniture for a relaxing evening."
   }
   ```  
 
-### Example Output  
+- **Response:**  
+  - Success:  
+    ```json
+    {"message": "New data added to control"}
+    ```  
+  - Error:  
+    ```json
+    {"error": "Detailed error message"}
+    ```  
 
-```json
-{
-  "Smart Adjustable Bed": false,
-  "Smart Recliner": true,
-  "Smart Desk": false,
-  "Smart Lamp": true,
-  "Smart Curtains": false,
-  "Smart Coffee Table": false,
-  "Smart Bookshelf": false,
-  "Smart Fan": true,
-  "Smart A/C": 26
-}
-```
+### **2. `/get_state` (GET)**  
+**Description:** Retrieves the latest furniture state.  
+
+- **Response:**  
+  ```json
+  {
+      "state": {
+          "sofa": "reclined",
+          "lights": "dimmed",
+          "ac": "22°C"
+      },
+      "reason": "User requested a relaxing evening setup."
+  }
+  ```  
+
+### **3. `/update_sensor` (POST)**  
+**Description:** Updates the sensor data log.  
+
+- **Request Body:**  
+  ```json
+  {
+      "sensor_data": {
+          "temperature": 25,
+          "humidity": 0.45
+      }
+  }
+  ```  
+
+- **Response:**  
+  - Success:  
+    ```json
+    {"message": "Sensor data updated successfully."}
+    ```  
+  - Error:  
+    ```json
+    {"error": "Invalid sensor data format."}
+    ```  
+
+### **4. `/upload_photo` (POST)**  
+**Description:** Uploads a photo for analysis to assist in decision-making.  
+
+- **Request:**  
+  - Form data with the key `photo` for the uploaded image.  
+
+- **Response:**  
+  ```json
+  {"message": "Photo uploaded successfully and replaced cap.jpg."}
+  ```  
+
+### **5. `/` (GET)**  
+**Description:** Health check to confirm the server is running.  
+
+- **Response:**  
+  ```json
+  {"message": "Server is running."}
+  ```  
 
 ---
 
@@ -132,72 +134,140 @@ The following prompt techniques are used to guide Homie's decision-making:
 
 ---
 
-## Python Implementation  
+## Setup Instructions  
 
-The system is implemented in Python using the `main.py` script. Key components include:  
+### **1. Requirements**  
+- Python 3.8 or higher  
+- Flask  
+- Flask-CORS  
+- ollama Python SDK  
+- Dependencies listed in `requirements.txt`  
 
-1. **Logging and Error Handling**  
-   - Logs interactions and monitors errors to maintain session stability.  
-   - Includes session restart capability for critical errors.  
+### **2. Installation**  
 
-2. **JSON Validation**  
-   - Ensures outputs are in valid JSON format for seamless integration.  
-
-3. **Session Management**  
-   - Maintains a conversation history for context-aware responses.  
-
-4. **Furniture and Sensor Logs**  
-   - Tracks changes in furniture states and sensor values over time.  
-
-5. **Camera Image Analysis**  
-   - Uses a vision model (`llama3.2-vision`) to describe the current room state.  
-
-6. **Integration with AI Models**  
-   - Interacts with `ollama` AI models to process prompts and generate responses.  
-
----
-
-## Usage  
-
-1. **Run the Main Script**:  
+1. Clone the repository:  
    ```bash
-   python main.py
+   git clone https://github.com/your-repo/homie.git
+   cd homie
    ```  
 
-2. **Interaction**:  
-   - Provide user inputs when prompted.  
-   - Homie will analyze the latest sensor data, camera image descriptions, and user preferences to determine the optimal furniture state.  
+2. Install dependencies:  
+   ```bash
+   pip install -r requirements.txt
+   ```  
 
-3. **Exit**:  
-   - Type `exit` or `quit` to terminate the session.  
+3. Ensure the following files and directories exist:  
+   - `Prompt/` directory with the following files:  
+     - `prompt.txt`  
+     - `userprofile.txt`  
+     - `furniturelist.txt`  
+     - `CapAnalyzePrompt.txt`  
+   - Logs directory:  
+     - `furniture_state_log.json`  
+     - `sensor_log.json`  
+
+4. Set up the initial prompt and logs:  
+   ```bash
+   python app.py
+   ```  
+
+5. Run the Flask app:  
+   ```bash
+   python app.py
+   ```  
+
+6. Access the API at:  
+   ```plaintext
+   http://localhost:5000
+   ```  
 
 ---
 
-## Files and Directories  
+## File Structure  
 
-- **`main.py`**: Core script to run Homie.  
-- **`prompt.txt`**: Primary prompt defining Homie's role and task.  
-- **`furniturelist.txt`**: List of IoT-enabled furniture.  
-- **`userprofile.txt`**: User profile information.  
-- **`CapAnalyzePrompt.txt`**: Prompt for analyzing camera images.  
-- **`furniture_state_log.json`**: Log file for tracking furniture states.  
-- **`sensor_log.json`**: Log file for tracking sensor data.  
-- **`cap.jpg`**: Sample camera image for analysis.  
+```plaintext
+homie/
+├── app.py
+├── requirements.txt
+├── Prompt/
+│   ├── prompt.txt
+│   ├── userprofile.txt
+│   ├── furniturelist.txt
+│   ├── CapAnalyzePrompt.txt
+├── furniture_state_log.json
+├── sensor_log.json
+└── README.md
+```  
 
 ---
 
-## Contributions  
+## Example Usage  
 
-Feel free to fork this repository and submit pull requests for improvements or additional features.  
+### **Scenario 1: Adjusting for Comfort**  
+1. Upload sensor data:  
+   ```bash
+   curl -X POST http://localhost:5000/update_sensor \
+   -H "Content-Type: application/json" \
+   -d '{"sensor_data": {"temperature": 22, "humidity": 0.4}}'
+   ```  
+
+2. Upload a photo:  
+   ```bash
+   curl -X POST -F "photo=@path/to/image.jpg" http://localhost:5000/upload_photo
+   ```  
+
+3. Send a query:  
+   ```bash
+   curl -X POST http://localhost:5000/send_query \
+   -H "Content-Type: application/json" \
+   -d '{"user_input": "Set the room for a cozy movie night."}'
+   ```  
+
+4. Retrieve the furniture state:  
+   ```bash
+   curl http://localhost:5000/get_state
+   ```  
+
+---
+
+## Error Handling  
+
+- **Invalid Input:**  
+  Returns a detailed error message when user input or sensor data is invalid.  
+
+- **File Not Found:**  
+  Logs errors if the required files (prompts, logs) are missing and restarts the session if critical.  
+
+- **AI Model Errors:**  
+  Logs any issues during model interaction and provides fallback mechanisms to restart the session.  
+
+---
+
+## Future Enhancements  
+
+1. **Authentication and Authorization**:  
+   Implement user authentication to secure API endpoints.  
+
+2. **Database Integration**:  
+   Replace JSON logs with a robust database for efficient data storage and retrieval.  
+
+3. **Real-Time Updates**:  
+   Use WebSocket or MQTT for real-time updates to connected devices.  
+
+4. **Enhanced Image Analysis**:  
+   Integrate advanced vision models for more detailed image insights.  
+
+5. **Mobile App Integration**:  
+   Develop a mobile app for seamless interaction with Homie.  
 
 ---
 
 ## License  
 
-This project is licensed under the MIT License.  
+This project is licensed under the MIT License. See the `LICENSE` file for more details.  
 
----
+--- 
 
-## Contact  
+## Author  
 
-For questions or feedback, please reach out to [your-email@example.com].
+Developed by [ARRRsunny](https://github.com/your-profile). Contributions are welcome!
