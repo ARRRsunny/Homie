@@ -2383,5 +2383,59 @@
             "Smart Light B": false,
             "Smart Light C": false
         }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. Considering the current temperature of 22\u00b0C is slightly lower than preferred, we will adjust it to a comfortable level. Since the user is not using the recliner or lamp, they will remain off."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": false,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 20,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 20\u00b0C, which matches the user's preference. However, the room has not been recently occupied, so some furniture can be turned off to conserve energy."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": false,
+            "Smart A/C": 20,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "User prefers dim lighting and cooler temperatures, so the lights are turned off, and the AC is set to a lower temperature."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 18,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
     ]
 ]

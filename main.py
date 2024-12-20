@@ -8,12 +8,12 @@ from typing import List, Dict
 import ollama
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 import smtplib
 from ultralytics import YOLO
 import cv2 as cv
 import urllib.request as ul
+from apscheduler.schedulers.background import BackgroundScheduler
+
 # Set up logging for debugging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -32,15 +32,20 @@ USER_PROFILE_PATH = 'Prompt/userprofile.txt'
 FURNITURE_LIST_PATH = 'Prompt/furniturelist.txt'
 CAP_PROMPT_PATH = 'Prompt/CapAnalyzePrompt.txt'
 REMINDER_CONTENT_PATH = "Prompt/preset_reminder.json"
+EMAIL_REPORT_PATH = 'Prompt/emailreportprompt.txt'
 
 CAP_IMAGE_PATH = 'cap/cap.jpg'
 PROCESSD_FILE_PATH = "cap/cap_processed.jpg"
 
-EMAIL_ADDR = 'example@gmail.com'
-EMAIL_AGENT_ADDR = "example@gmail.com"
-EMAIL_AGENT_PASS = "password"
+EMAIL_ADDR = '141c28@gmail.com'
+EMAIL_AGENT_ADDR = "homie9500@gmail.com"
+EMAIL_AGENT_PASS = "hgmo foiu diwl cfrj"
+
+REPORT_LOG_LENGHT = 10
 # Initialize conversation history
 history = []
+
+scheduler = BackgroundScheduler()
 
 def extract_content_inside_braces(text: str) -> str:
     """Extract content inside curly braces."""
@@ -272,7 +277,53 @@ def send_query():
         logging.error(f"Error processing query: {e}")
         return jsonify({"error": str(e)}), 500
     
+
+def weekly_task():
+    logging.debug("prepare weekly report")
+    send_weekly_report(EMAIL_AGENT_ADDR,EMAIL_AGENT_PASS,EMAIL_ADDR)
+
+def send_weekly_report(email_user, email_pass, email_receiver):
+    logging.debug(email_receiver)
+    msg = MIMEMultipart()
+    msg['From'] = email_user
+    msg['To'] = email_receiver
+    msg['Subject'] = 'Weekly Report'
+
+    body = LLM_intergated_Report()
+    logging.debug(body)
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(email_user, email_pass)
+            server.send_message(msg)
+            logging.debug("Report sent")
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+
+def LLM_intergated_Report():
+    data = load_furniture_state_log(FURNITURE_LOG_PATH)
+    data = data[-REPORT_LOG_LENGHT:] if len(data) >= REPORT_LOG_LENGHT else data
+    propmt = load_content_from_file(EMAIL_REPORT_PATH)
+    combine_prompt = f"{propmt}here are the recent users' action log:{data}"
+    logging.debug(combine_prompt)
+    response = ollama.chat(model='llama3.1:8b', messages=[{'role': 'user','content': combine_prompt}])
+    logging.debug(response)
+    generated_report = response['message']['content']
+    logging.debug(generated_report)
+    return generated_report
+
 #fetch furniture state
+@app.route('/get_report', methods=['GET'])
+def send_report():
+    try:
+        weekly_task()
+        return jsonify({"message": "Report sent successfully."}), 200
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/get_state', methods=['GET'])
 def send_furniture_state():
     try:
@@ -340,6 +391,17 @@ def serve_html():
     except Exception as e:
         logging.error("Error serving HTML: %s", e)
         abort(500, "Internal server error")
+    
+@app.route('/test_panel', methods=['GET'])
+def serve_test_panel():
+    try:
+        url = "https://raw.githubusercontent.com/ARRRsunny/Homie/refs/heads/main/webuitester.html"
+        with ul.urlopen(url) as client:
+            htmldata = client.read().decode('utf-8')
+        return htmldata
+    except Exception as e:
+        logging.error("Error serving HTML: %s", e)
+        abort(500, "Internal server error")
 
 @app.route('/send_email_reminder/<id>', methods=['GET'])
 def send_email(id):
@@ -400,5 +462,6 @@ def setup():
 
 # Run the Flask server
 if __name__ == "__main__":    
+    scheduler.add_job(weekly_task, 'cron', day_of_week='sun', hour=20, minute=0)    #Sunday 8.00pm sent report
     setup()
     app.run(host="0.0.0.0", port=8080, debug=True)
