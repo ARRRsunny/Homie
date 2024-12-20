@@ -24,10 +24,10 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 - **RESTful API**:  
   Provides a user-friendly API for querying, updating, and uploading data.  
 
-- **LLM Report**:
+- **LLM Report**:  
   Use the log to infer user habit and give suggestions
 
-- **Immediate Reminder**:
+- **Immediate Reminder**:  
   Send an urgent reminder when danger occurs.
   
 ---
