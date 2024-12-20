@@ -333,7 +333,7 @@ def upload_photo():
 @app.route('/', methods=['GET'])
 def serve_html():
     try:
-        url = "https://github.com/ARRRsunny/Homie/blob/main/userpanel.html"
+        url = "https://raw.githubusercontent.com/ARRRsunny/Homie/refs/heads/main/userpanel.html"
         with ul.urlopen(url) as client:
             htmldata = client.read().decode('utf-8')
         return htmldata
@@ -401,4 +401,4 @@ def setup():
 # Run the Flask server
 if __name__ == "__main__":    
     setup()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
