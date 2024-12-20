@@ -115,7 +115,7 @@ html webpage
 - **Response:**  
 html webpage
 
-### **6. `/send_email_reminder/<id>` (GET)**  
+### **7. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
 
 - **Response:**
@@ -124,7 +124,7 @@ html webpage
     {'message': 'Email sent successfully'}
     ```  
 
-### **6. `/get_report` (GET)**  
+### **8. `/get_report` (GET)**  
 **Description:** send an email about the weekly report of user.  
 
 - **Response:**
