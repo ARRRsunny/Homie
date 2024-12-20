@@ -1,0 +1,12 @@
+{
+    "0": "A fire has been detected in the vicinity. Please evacuate immediately using the nearest exit. Do not use elevators. Call emergency services if you are in danger.",
+    "1": "Gas Leak Detected! Body: A gas leak has been detected. Evacuate the area immediately and avoid using electrical devices. Call emergency services to report the leak.",
+    "2": "Flooding is occurring in your area. Move to higher ground immediately and avoid low-lying areas. Do not attempt to drive through flooded roads.",
+    "3": "Power Outage! An unexpected power outage has occurred. Stay calm, use flashlights instead of candles, and avoid opening refrigerators to keep food cold.",
+    "4": "Earthquake Warning! An earthquake has been detected. Drop to the ground, take cover under sturdy furniture, and hold on until the shaking stops. Stay indoors until it's safe to go outside.",
+    "5": "Severe Weather Alert! Severe weather conditions are expected. Stay indoors, secure loose objects outside, and keep emergency supplies handy. Monitor weather updates.",
+    "6": "Tornado Warning! A tornado has been sighted in the area. Take shelter in a basement or an interior room on the lowest floor, away from windows. Protect yourself with sturdy furniture or a mattress.",
+    "7": "Landslide Warning! Landslide risk is high in the area. Evacuate if advised by authorities and avoid driving near steep slopes or drainage areas.",
+    "8": "Chemical Spill Alert! A chemical spill has been reported. Evacuate the area immediately, avoid inhaling fumes, and seek medical attention if exposed.",
+    "9": "Heatwave Alert! Extreme heat is expected. Stay hydrated, avoid outdoor activities during peak hours, and check on vulnerable individuals."
+}

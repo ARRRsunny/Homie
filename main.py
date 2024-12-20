@@ -6,7 +6,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from typing import List, Dict
 import ollama
-
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+import smtplib
 # Set up logging for debugging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -15,15 +19,19 @@ app = Flask(__name__)
 CORS(app)
 
 # Define paths for logs and uploaded files
-FURNITURE_LOG_PATH = 'furniture_state_log.json'
-SENSOR_LOG_PATH = 'sensor_log.json'
-CAP_IMAGE_PATH = 'cap.jpg'
+FURNITURE_LOG_PATH = 'logs/furniture_state_log.json'
+SENSOR_LOG_PATH = 'logs/sensor_log.json'
+CAP_IMAGE_PATH = 'cap/cap.jpg'
 
 PROMPT_FILE_PATH = 'Prompt/prompt.txt'        
 USER_PROFILE_PATH = 'Prompt/userprofile.txt'
 FURNITURE_LIST_PATH = 'Prompt/furniturelist.txt'
 CAP_PROMPT_PATH = 'Prompt/CapAnalyzePrompt.txt'
+REMINDER_CONTENT_PATH = "Prompt/preset_reminder.json"
 
+EMAIL_ADDR = 'example@gmail.com'
+EMAIL_AGENT_ADDR = "example@gmail.com"
+EMAIL_AGENT_PASS = "password"
 # Initialize conversation history
 history = []
 
@@ -71,7 +79,6 @@ def load_furniture_state_log(log_path: str) -> List[Dict[str, str]]:
             json.dump([], log_file)
     with open(log_path, 'r') as log_file:
         return json.load(log_file)
-
 
 def save_furniture_state_log(log_path: str, log_data: List[Dict[str, str]]) -> None:
     """Save the updated furniture state log."""
@@ -174,6 +181,23 @@ def trim_history(history):
         return [history[0]] + history[-5:]
     return history
 
+
+def load_reminder_content(Reminder_path: str,id:str) -> str:
+    try:
+        if not os.path.exists(Reminder_path):
+            with open(Reminder_path, 'w') as log_file:
+                json.dump({}, log_file)
+        with open(Reminder_path, 'r') as log_file:
+            try:
+                data = json.load(log_file)
+            except json.JSONDecodeError:
+                raise ValueError(f"The file '{Reminder_path}' contains invalid JSON.")
+        if id not in data:
+            raise KeyError(f"The key '{id}' does not exist in the log file.")
+        return data[id]
+    except Exception as e:
+        raise Exception(f"An unexpected error occurred: {e}") from e
+
 #main user request
 @app.route('/send_query', methods=['POST'])
 def send_query():
@@ -268,6 +292,28 @@ def upload_photo():
 def home():
     """Home route to indicate the server is running."""
     return jsonify({"message": "Server is running."}), 200
+
+@app.route('/send_email_reminder/<id>', methods=['GET'])
+def send_email(id):
+    logging.debug(EMAIL_ADDR)
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_AGENT_ADDR
+    msg['To'] = EMAIL_ADDR
+    msg['Subject'] = 'EMERGENCY'
+
+    body = load_reminder_content(REMINDER_CONTENT_PATH,id)
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(EMAIL_AGENT_ADDR, EMAIL_AGENT_PASS)
+            server.send_message(msg)
+            logging.debug("Report sent")
+            return jsonify({'message': 'Email sent successfully'})
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return jsonify({'error': f"Failed to send email: {e}"})
 
 
 def setup():
