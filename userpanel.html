@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask Server Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1072px;
+    }
+    h1, h3 {
+      text-align: center;
+    }
+    #camera-container, #query-panel {
+      margin: 20px auto;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-width: 600px;
+      background-color: #f9f9f9;
+    }
+    #state-panel{
+      margin: 20px auto;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-width: 600px;
+      background-color: #f9f9f9;
+      height: 500px;
+      width: 200px;
+      margin-left: 20px;
+    }
+    video, canvas {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input, textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #state-output, #query-response {
+      white-space: pre-wrap;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .state-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+    }
+    .state-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .state-on {
+      background-color: green;
+    }
+    .state-off {
+      background-color: red;
+    }
+    .left {
+        min-width: 400px;
+        min-height: 400px;
+        flex: 1 1 40%;
+        text-align: center;
+        margin-right: 10px;
+            
+    }
+    .right {
+        min-width: 400px;
+        min-height: 400px;
+        flex: 1 1 60%;
+        overflow: hidden;
+        display: flex;
+        margin-left: none;
+        flex-direction: column;
+        margin: 10px;
+    }
+
+  </style>
+</head>
+<body>
+
+
+  <!-- Camera Viewfinder and Photo Upload -->
+  <div id = "left">
+    <div id="camera-container">
+        <h3>Live Camera</h3>
+        <video id="video" autoplay></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <button id="capture-btn">Capture Photo</button>
+        <p id="upload-status">Status: No photo uploaded yet.</p>
+    </div>
+    <div id="query-panel">
+        <h3>Send Query</h3>
+        <textarea id="query-input" placeholder="Enter your query here..." rows="4"></textarea>
+        <button id="send-query-btn">Send Query</button>
+        <div id="query-response">Response will be displayed here...</div>
+    </div>
+  </div>
+  <!-- Furniture State Panel -->
+  <div id="right">
+    <div id="state-panel">
+        <h3>Furniture State</h3>
+        <button id="get-state-btn">Fetch Latest State</button>
+        <div id="state-container" class="state-container">
+        <p>State will be displayed here...</p>
+        </div>
+    </div>
+  </div>
+  <!-- Query Input and Response -->
+  
+
+  <script>
+    // Base server address
+    const baseAddress = `http://${window.location.hostname}:8080`;
+
+    // Camera and photo upload elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    const uploadStatus = document.getElementById('upload-status');
+
+    // Furniture state elements
+    const getStateBtn = document.getElementById('get-state-btn');
+    const stateContainer = document.getElementById('state-container');
+
+    // Query input and response elements
+    const queryInput = document.getElementById('query-input');
+    const sendQueryBtn = document.getElementById('send-query-btn');
+    const queryResponse = document.getElementById('query-response');
+
+    let capturedImage = null;
+
+    // Start the user's camera
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+        alert('Unable to access the camera.');
+      }
+    }
+
+    // Add 'async' to handle await calls inside the event listener
+    captureBtn.addEventListener('click', async () => {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Capture the photo by drawing the video frame on the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+       //canvas.style.display = 'block';
+
+        // Convert the canvas content to a data URL
+        const capturedImage = canvas.toDataURL('image/jpeg');
+
+        if (!capturedImage) {
+            alert('No photo captured. Please capture a photo first.');
+            return;
+        }
+
+        alert('Photo captured! Uploading');
+
+        try {
+            // Convert the data URL to a Blob
+            const blob = await fetch(capturedImage).then((res) => res.blob());
+
+            // Prepare the form data for the upload
+            const formData = new FormData();
+            formData.append('photo', blob, 'photo.jpg');
+
+            // Send the photo to the server
+            const response = await fetch(`${baseAddress}/upload_photo`, {
+            method: 'POST',
+            body: formData,
+            });
+
+            // Parse the server response
+            const result = await response.json();
+
+            if (response.ok) {
+            uploadStatus.textContent = 'Status: Photo uploaded successfully.';
+            } else {
+            uploadStatus.textContent = `Status: ${result.error}`;
+            }
+        } catch (err) {
+            console.error('Error uploading photo:', err);
+            uploadStatus.textContent = 'Status: Error uploading photo.';
+        }
+    });
+
+    // Upload the captured photo to the server
+
+    async function updata_state() {
+        try {
+            const response = await fetch(`${baseAddress}/get_state`);
+            const data = await response.json();
+
+            if (response.ok) {
+            stateContainer.innerHTML = ''; // Clear the container before updating
+
+            // Iterate over the state items and display them
+            const stateItems = data[1]; // Assuming the second item in the response is the state object
+            for (const [key, value] of Object.entries(stateItems)) {
+                const stateItemDiv = document.createElement('div');
+                stateItemDiv.className = 'state-item';
+
+                // Add key as label
+                const stateKey = document.createElement('span');
+                stateKey.textContent = key;
+
+                // Add the indicator (red or green ball) for ON/OFF
+                const stateIndicator = document.createElement('span');
+                stateIndicator.className = 'state-indicator ' + (value ? 'state-on' : 'state-off');
+
+                // Append elements to the item div
+                stateItemDiv.appendChild(stateKey);
+                stateItemDiv.appendChild(stateIndicator);
+
+                // Append the item div to the container
+                stateContainer.appendChild(stateItemDiv);
+            }
+            } else {
+            stateContainer.textContent = `Error: ${data.error}`;
+            }
+        } catch (err) {
+            console.error('Error fetching state:', err);
+            stateContainer.textContent = 'Error: Unable to fetch state.';
+        }
+        }
+
+        // Attach the function to the button click
+        getStateBtn.addEventListener('click', updata_state); // Pass the function reference, do not invoke it
+
+        // Automatically refresh the state every 10 seconds
+        setInterval(updata_state, 10000);
+    // Send a query to the AI model
+    sendQueryBtn.addEventListener('click', async () => {
+      const userInput = queryInput.value.trim();
+      if (!userInput) {
+        alert('Please enter a query.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseAddress}/send_query`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ user_input: userInput })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          queryResponse.textContent = 'Response: ' + JSON.stringify(data.message || data, null, 2);
+        } else {
+          queryResponse.textContent = `Error: ${data.error}`;
+        }
+      } catch (err) {
+        console.error('Error sending query:', err);
+        queryResponse.textContent = 'Error: Unable to send query.';
+      }
+    });
+
+    // Start the camera on page load
+    window.addEventListener('load', startCamera);
+
+  </script>
+
+</body>
+</html>

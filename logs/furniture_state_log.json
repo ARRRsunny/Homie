@@ -1393,5 +1393,170 @@
             "Smart Light B": true,
             "Smart Light C": true
         }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current room temperature is 38C, which is too hot for the user's preference. The Smart AC should be set to a lower temperature, such as 22C, to maintain a comfortable temperature."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Desk": false,
+            "Smart Lamp": false,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. Given the current state of furniture, we will adjust the settings to maintain a comfortable environment."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Desk": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 20,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 38 C, which is higher than the preferred temperature of 25 C."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": false,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 25,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 38%C, which is higher than the preferred range. The fan and A/C are already on, so we'll adjust the A/C to a cooler temperature while keeping the fan on."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": true,
+            "Smart Lamp": true,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user wants to turn on all lights, but considering the current temperature (23\u00b0C) is suitable, we prioritize energy efficiency by maintaining the current A/C setting of 22\u00b0C and adjusting other devices accordingly."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 22\u00b0C, which is within the preferred range. However, the user is likely sitting or reclining on a surface (based on the camera image description not provided), so we'll keep the Smart Adjustable Bed OFF for now."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": true,
+            "Smart Lamp": false,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 38\u00b0C, which is higher than the preferred temperature of the user (cooler temperatures). Therefore, the A/C should be set to a lower temperature. Since the user is reclining on the Smart Recliner, it should be turned ON. Additionally, turning on Smart Light A, Smart Light B, and Smart Light C will provide sufficient lighting for the room."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": true,
+            "Smart Desk": false,
+            "Smart Lamp": false,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 20,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. Since the current temperature is already within a comfortable range (20\u00b0C), no adjustments to the AC are necessary. The user is currently reclining, so it's likely they want to relax, but the Smart Recliner is already turned ON in the current state. However, considering the user's weight (110kg) and age (33), it might be more comfortable for them if they had some extra support or adjustment on their bed."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": true,
+            "Smart Lamp": false,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 20,
+            "Smart Light A": true,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "User prefers dim lighting, cooler temperatures, so the lights are turned off, A/C is set to maintain comfortable temperature, and fan remains on."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": true,
+            "Smart Lamp": false,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart Light A": false,
+            "Smart Light B": false,
+            "Smart Light C": false
+        }
     ]
 ]

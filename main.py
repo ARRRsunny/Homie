@@ -2,7 +2,7 @@ import os
 import json
 import logging
 import re
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 from typing import List, Dict
 import ollama
@@ -13,7 +13,7 @@ from email import encoders
 import smtplib
 from ultralytics import YOLO
 import cv2 as cv
-
+import urllib.request as ul
 # Set up logging for debugging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -331,9 +331,15 @@ def upload_photo():
 
 
 @app.route('/', methods=['GET'])
-def home():
-    """Home route to indicate the server is running."""
-    return jsonify({"message": "Server is running."}), 200
+def serve_html():
+    try:
+        url = "https://github.com/ARRRsunny/Homie/blob/main/userpanel.html"
+        with ul.urlopen(url) as client:
+            htmldata = client.read().decode('utf-8')
+        return htmldata
+    except Exception as e:
+        logging.error("Error serving HTML: %s", e)
+        abort(500, "Internal server error")
 
 @app.route('/send_email_reminder/<id>', methods=['GET'])
 def send_email(id):
