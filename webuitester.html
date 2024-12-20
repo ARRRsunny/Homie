@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask Server Testing Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    h1, h3 {
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input, textarea, select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Flask Server Testing Panel</h1>
+
+    <!-- Upload Photo -->
+    <h3>Upload Photo</h3>
+    <form id="upload-photo-form">
+      <input type="file" id="photo" accept="image/*">
+      <button type="button" onclick="uploadPhoto()">Upload Photo</button>
+    </form>
+
+    <!-- Update Sensor Data -->
+    <h3>Update Sensor Data</h3>
+    <form id="sensor-form">
+      <input type="number" step="0.1" id="temperature" placeholder="Temperature">
+      <input type="number" step="0.01" id="humidity" placeholder="Humidity (0 to 1)">
+      <button type="button" onclick="updateSensor()">Update Sensor</button>
+    </form>
+
+    <!-- Fetch Furniture State -->
+    <h3>Fetch Furniture State</h3>
+    <button type="button" onclick="fetchFurnitureState()">Fetch State</button>
+
+    <!-- Send Query -->
+    <h3>Send Query</h3>
+    <textarea id="query" rows="4" placeholder="Enter your query here..."></textarea>
+    <button type="button" onclick="sendQuery()">Send Query</button>
+
+    <!-- Send Email Reminder -->
+    <h3>Send Email Reminder</h3>
+    <input type="text" id="reminder-id" placeholder="Enter Reminder ID">
+    <button type="button" onclick="sendEmailReminder()">Send Email</button>
+
+    <h3>Fetch Weekly Report</h3>
+    <button type="button" onclick="getReport()">Fetch Weekly Report</button>
+
+    <!-- Response Display -->
+    <h3>Response</h3>
+    <div id="response">Response will be displayed here...</div>
+  </div>
+
+  <script>
+    const baseAddress = `http://42.2.115.185:8080`;
+
+    async function uploadPhoto() {
+      const photoInput = document.getElementById('photo');
+      if (!photoInput.files[0]) {
+        alert("Please select a photo to upload.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('photo', photoInput.files[0]);
+
+      try {
+        const response = await fetch(`${baseAddress}/upload_photo`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    async function updateSensor() {
+      const temperature = parseFloat(document.getElementById('temperature').value);
+      const humidity = parseFloat(document.getElementById('humidity').value);
+
+      if (isNaN(temperature) || isNaN(humidity)) {
+        alert("Please enter valid sensor data.");
+        return;
+      }
+
+      const sensorData = {
+        sensor_data: { temperature, humidity }
+      };
+
+      try {
+        const response = await fetch(`${baseAddress}/update_sensor`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sensorData)
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    async function fetchFurnitureState() {
+      try {
+        const response = await fetch(`${baseAddress}/get_state`, {
+          method: 'GET'
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    async function getReport() {
+      try {
+        const response = await fetch(`${baseAddress}/get_report`, {
+          method: 'GET'
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    async function sendQuery() {
+      const query = document.getElementById('query').value.trim();
+      if (!query) {
+        alert("Please enter a query.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseAddress}/send_query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_input: query })
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    async function sendEmailReminder() {
+      const reminderId = document.getElementById('reminder-id').value.trim();
+      if (!reminderId) {
+        alert("Please enter a reminder ID.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${baseAddress}/send_email_reminder/${reminderId}`, {
+          method: 'GET'
+        });
+        const data = await response.json();
+        showResponse(data);
+      } catch (error) {
+        showResponse({ error: error.message });
+      }
+    }
+
+    function showResponse(response) {
+      document.getElementById('response').textContent = JSON.stringify(response, null, 2);
+    }
+  </script>
+</body>
+</html>

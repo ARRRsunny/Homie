@@ -22,5 +22,13 @@
     {
         "temperature": 23,
         "humidity": 0.13
+    },
+    {
+        "temperature": 32,
+        "humidity": 0.5
+    },
+    {
+        "temperature": 32,
+        "humidity": 0.5
     }
 ]
