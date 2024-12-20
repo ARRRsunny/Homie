@@ -192,27 +192,17 @@ The following prompt techniques are used to guide Homie's decision-making:
    pip install -r requirements.txt
    ```  
 
-3. Ensure the following files and directories exist:  
-   - `Prompt/` directory with the following files:  
-     - `prompt.txt`  
-     - `userprofile.txt`  
-     - `furniturelist.txt`  
-     - `CapAnalyzePrompt.txt`  
-   - Logs directory:  
-     - `furniture_state_log.json`  
-     - `sensor_log.json`  
-
-4. Set up the initial prompt and logs:  
+3. Set up the initial prompt and logs:  
    ```bash
    python app.py
    ```  
 
-5. Run the Flask app:  
+4. Run the Flask app:  
    ```bash
    python app.py
    ```  
 
-6. Access the API at:  
+5. Access the API at:  
    ```plaintext
    http://localhost:5000
    ```  
