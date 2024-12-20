@@ -24,6 +24,12 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 - **RESTful API**:  
   Provides a user-friendly API for querying, updating, and uploading data.  
 
+- **LLM Report**
+  Use the log to infer user habit and give suggestions
+
+- **Immediate Reminder**
+  Send an urgent reminder when danger occurs.
+  
 ---
 
 ## API Endpoints  
@@ -98,13 +104,42 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
   ```  
 
 ### **5. `/` (GET)**  
-**Description:** Health check to confirm the server is running.  
+**Description:** Enter User normal panel.  
 
 - **Response:**  
-  ```json
-  {"message": "Server is running."}
-  ```  
+html webpage
 
+### **6. `/test_panel` (GET)**  
+**Description:** Enter test panel.  
+
+- **Response:**  
+html webpage
+
+### **6. `/send_email_reminder/<id>` (GET)**  
+**Description:** send an email reminder to the user.  
+
+- **Response:**
+  - Success:  
+    ```json
+    {'message': 'Email sent successfully'}
+    ```  
+
+### **6. `/get_report` (GET)**  
+**Description:** send an email about the weekly report of user.  
+
+- **Response:**
+  - Success:  
+    ```json
+    {"message": "Report sent successfully."}
+    ```  
+
+---
+## Model Used
+
+1. **yolo11m**
+2. **llama3.2-vision**
+3. **llama3.1:8b**
+   
 ---
 
 ## Prompt Techniques  
@@ -137,12 +172,13 @@ The following prompt techniques are used to guide Homie's decision-making:
 ## Setup Instructions  
 
 ### **1. Requirements**  
-- Python 3.8 or higher  
+- Python 3.10 or higher  
 - Flask  
 - Flask-CORS  
 - ollama Python SDK  
 - Dependencies listed in `requirements.txt`  
-
+- ultralytics
+  
 ### **2. Installation**  
 
 1. Clone the repository:  
@@ -187,15 +223,27 @@ The following prompt techniques are used to guide Homie's decision-making:
 
 ```plaintext
 homie/
+├── cap/
+│   ├──cap_processed.jpg
+│   ├──cap.jpg
 ├── app.py
 ├── requirements.txt
+├── userpanel.html
+├── webuitester.html
+├── yolo11m.pt
 ├── Prompt/
 │   ├── prompt.txt
 │   ├── userprofile.txt
 │   ├── furniturelist.txt
 │   ├── CapAnalyzePrompt.txt
-├── furniture_state_log.json
-├── sensor_log.json
+│   ├── preset_reminder.json
+│   ├── emailreportprompt.txt
+├── logs
+│   ├── furniture_state_log.json
+│   ├── sensor_log.json
+├── iot_control
+│   ├── ESP32_receiver.ino
+│   ├── PhotoCapture.py
 └── README.md
 ```  
 
