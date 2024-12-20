@@ -1355,5 +1355,43 @@
             "Smart Light B": true,
             "Smart Light C": true
         }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. Since the user is reclining in the Smart Recliner, we turn on the Smart Lamp to provide sufficient light for watching TV, but keep it dim as per user preference. The temperature is already set at a comfortable level, so we leave the Smart A/C setting unchanged."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": true,
+            "Smart Desk": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": false,
+            "Smart A/C": 24,
+            "Smart Light A": false,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers dim lighting and cooler temperatures. The current temperature is 24\u00b0C, which aligns with the user's preference. However, the user is currently reclining, so we'll turn off the Smart Adjustable Bed and keep the Smart Recliner on."
+        },
+        {
+            "Smart Adjustable Bed": false,
+            "Smart Recliner": true,
+            "Smart Desk": false,
+            "Smart Lamp": false,
+            "Smart Curtains": true,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 24,
+            "Smart Light A": false,
+            "Smart Light B": true,
+            "Smart Light C": true
+        }
     ]
 ]

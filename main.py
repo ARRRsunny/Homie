@@ -11,6 +11,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 import smtplib
+from ultralytics import YOLO
+import cv2 as cv
+
 # Set up logging for debugging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -18,16 +21,20 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 app = Flask(__name__)
 CORS(app)
 
+model = YOLO("yolo11m.pt")
 # Define paths for logs and uploaded files
 FURNITURE_LOG_PATH = 'logs/furniture_state_log.json'
 SENSOR_LOG_PATH = 'logs/sensor_log.json'
-CAP_IMAGE_PATH = 'cap/cap.jpg'
+
 
 PROMPT_FILE_PATH = 'Prompt/prompt.txt'        
 USER_PROFILE_PATH = 'Prompt/userprofile.txt'
 FURNITURE_LIST_PATH = 'Prompt/furniturelist.txt'
 CAP_PROMPT_PATH = 'Prompt/CapAnalyzePrompt.txt'
 REMINDER_CONTENT_PATH = "Prompt/preset_reminder.json"
+
+CAP_IMAGE_PATH = 'cap/cap.jpg'
+PROCESSD_FILE_PATH = "cap/cap_processed.jpg"
 
 EMAIL_ADDR = 'example@gmail.com'
 EMAIL_AGENT_ADDR = "example@gmail.com"
@@ -181,6 +188,36 @@ def trim_history(history):
         return [history[0]] + history[-5:]
     return history
 
+def predicting(img, save_new_img_path, conf = 0.4, marks=[], Save_new_photo = False, corner = False, classes=[]):  
+    global model
+    results = model.predict(img, conf=conf,classes=classes)
+    if not results:
+        return False
+    else:
+        for result in results:
+            for box in result.boxes:
+                mark = [int(box.xyxy[0][0]), int(box.xyxy[0][1]),
+                            int(box.xyxy[0][2]), int(box.xyxy[0][3]), 
+                            result.names[int(box.cls[0])]]
+                marks.append(mark)
+        if Save_new_photo:
+            save_new_image(img, marks, save_new_img_path,corner=corner)
+        return True
+    
+def save_new_image(img, marks, save_new_img_path, corner=False):
+    for mark in marks:
+        if corner:
+            cv.rectangle(img, (mark[0], mark[1]),(mark[2], mark[3]), (255, 0, 0), 2)
+        cropped_region = img[mark[1]:mark[3],mark[0]:mark[2]]
+        logging.info("YOLO cropped new img")
+        cv.imwrite(save_new_img_path, cropped_region)
+    if corner:
+        cv.imwrite(save_new_img_path, cropped_region)
+
+def image_handling(img_path:str,save_new_img_path:str):
+    classes = [0] #person
+    img = cv.imread(img_path)
+    predicting(img, save_new_img_path, Save_new_photo=True,classes=classes)
 
 def load_reminder_content(Reminder_path: str,id:str) -> str:
     try:
@@ -211,7 +248,7 @@ def send_query():
 
         latest_furniture_state = get_latest_furniture_state(FURNITURE_LOG_PATH)
         latest_sensor_value = get_latest_sensor_value(SENSOR_LOG_PATH)
-        cap_description = cap_analyze(CAP_IMAGE_PATH)
+        cap_description = cap_analyze(PROCESSD_FILE_PATH)
 
         prompt = construct_prompt(user_input, latest_furniture_state, latest_sensor_value, cap_description)
         logging.debug(prompt)
@@ -281,6 +318,11 @@ def upload_photo():
             return jsonify({"error": "No selected file."}), 400
 
         file.save(CAP_IMAGE_PATH)
+        try:
+            image_handling(CAP_IMAGE_PATH,PROCESSD_FILE_PATH)
+        except Exception as e:
+            logging.error(f"Error YOLO cropping: {e}")
+            
         return jsonify({"message": "Photo uploaded successfully and replaced cap.jpg."}), 200
 
     except Exception as e:

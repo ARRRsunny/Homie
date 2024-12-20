@@ -10,14 +10,12 @@ def predicting(model, frame, processed_frame_file_address, conf = 0.7, marks=[],
     if not results:
         return False
     else:
-
         for result in results:
             for box in result.boxes:
                 mark = [int(box.xyxy[0][0]), int(box.xyxy[0][1]),
                             int(box.xyxy[0][2]), int(box.xyxy[0][3]), 
                             result.names[int(box.cls[0])]]
                 marks.append(mark)
-
         if generate:
             generating(frame, marks, processed_frame_file_address,corner)
         return True
@@ -57,17 +55,17 @@ def generating(frame, marks, processed_frame_file_address, corner=False):
 
 ### For images ### 
 
-# model = YOLO("yolo11m.pt")
-# processed_file_address = "test Images/Processed"
-# img = cv.imread("test Images\Test\Images.jpg")
-# add = "test Images/Processed"
-# classes = [0]
-# IP_address = " " # Your IP address + port 
-# sub_folder = " " # Subname of your website
-# frame_name = "cropped_region_no.0--person.jpg"
-# upload = predicting(model, img, add, generate=True,conf=0.4,classes=classes)
-# if upload:
-#     uploading(IP_address, frame_name, processed_file_address, sub_folder)
+model = YOLO("yolo11m.pt")
+processed_file_address = "test Images/Processed"
+img = cv.imread("test Images\Test\Images.jpg")
+add = "test Images/Processed"
+classes = [0]
+IP_address = " " # Your IP address + port 
+sub_folder = " " # Subname of your website
+frame_name = "cropped_region_no.0--person.jpg"
+upload = predicting(model, img, add, generate=True,conf=0.4,classes=classes)
+if upload:
+    uploading(IP_address, frame_name, processed_file_address, sub_folder)
 
 ##########################################################################################################
 
