@@ -280,7 +280,20 @@ homie/
   Logs any issues during model interaction and provides fallback mechanisms to restart the session.  
 
 ---
+## Stress Test
 
+- **Direct Input**: "Turn off the light"
+  - **Ideal Output**: Light off
+- **Complex Input**: "I feel so cool"
+  - **Ideal Output**: A/C set to a higher temperature
+
+The test was conducted 50 times for each type of input.
+
+| Direct Input Accuracy | Complex Input Accuracy |
+|-----------------------|------------------------|
+|          91%          |          76%           |
+
+---
 ## Future Enhancements  
 
 1. **Authentication and Authorization**:  
