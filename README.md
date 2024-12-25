@@ -321,4 +321,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ## Author  
 
-Developed by [ARRRsunny](https://github.com/your-profile). Contributions are welcome!
+Developed by [ARRRsunny](https://github.com/ARRRsunny). Contributions are welcome!
