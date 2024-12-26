@@ -899,5 +899,41 @@
             "Smart kitchen Light": true,
             "Smart living room Light": true
         }
+    ],
+    [
+        {
+            "Reason": "User prefers bright lighting and cooler temperatures. The current furniture state is analyzed to optimize the system's operation."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 20,
+            "Smart bathroom Light": true,
+            "Smart kitchen Light": true,
+            "Smart living room Light": false
+        }
+    ],
+    [
+        {
+            "Reason": "The user prefers bright lighting and cooler temperatures. Since the current temperature is 38\u00b0C, it's higher than the preferred temperature of the user. The Smart A/C should be adjusted to 22\u00b0C for better comfort."
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": true,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": true,
+            "Smart A/C": 22,
+            "Smart bathroom Light": true,
+            "Smart kitchen Light": true,
+            "Smart living room Light": true
+        }
     ]
 ]
