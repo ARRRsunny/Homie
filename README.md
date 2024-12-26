@@ -231,11 +231,15 @@ The following prompt techniques are used to guide Homie's decision-making:
    ```python
      app.run(host="0.0.0.0", port=8080, debug=True)   
    ```
-5. Run the server:  
+6. Run the server:  
    ```bash
    python main.py
-   ```  
-
+   ```
+   
+7. Set your browser:
+   Get camera permissions
+   go [chrome://flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure)
+   add the address
 6. Access the API at:  
    ```plaintext
    http://localhost:8080
