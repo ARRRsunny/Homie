@@ -59,14 +59,24 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
   ```json
-  {
-      "state": {
-          "sofa": "reclined",
-          "lights": "dimmed",
-          "ac": "22°C"
-      },
-      "reason": "User requested a relaxing evening setup."
-  }
+  [
+        {
+            "Reason": "Your explanation for the decisions, e.g., 'User wants to turn on all the light, and the temperature is too high, so the A/C is set to 24\u7c1eC.'"
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": false,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": false,
+            "Smart A/C": 24,
+            "Smart bathroom Light": true,
+            "Smart kitchen Light": true,
+            "Smart living room Light": true
+        }
+    ]
   ```  
 
 ### **3. `/update_sensor` (POST)**  
@@ -75,10 +85,8 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 - **Request Body:**  
   ```json
   {
-      "sensor_data": {
-          "temperature": 25,
-          "humidity": 0.45
-      }
+    "temperature": 32,
+    "humidity": 0.5
   }
   ```  
 
@@ -108,12 +116,14 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
 html webpage
+![userpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/userpanel.png)
 
 ### **6. `/test_panel` (GET)**  
 **Description:** Enter test panel.  
 
 - **Response:**  
 html webpage
+![testpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/testpanel.png)
 
 ### **7. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
@@ -139,6 +149,8 @@ html webpage
 1. **yolo11m**
 2. **llama3.2-vision**
 3. **llama3.1:8b**
+4. **furniture_llama3.1:latest**
+   This model is tuned from llama3.1:8b, specifically tailored for this project. However, its performance is subpar. It's not recommended for use 😭.
    
 ---
 
@@ -190,21 +202,43 @@ The following prompt techniques are used to guide Homie's decision-making:
 2. Install dependencies:  
    ```bash
    pip install -r requirements.txt
-   ```  
+   ```
 
-3. Set up the initial prompt and logs:  
+3. Pull the Model:
    ```bash
-   python app.py
-   ```  
-
-4. Run the Flask app:  
+   ollama pull llama3.1
+   ```
    ```bash
-   python app.py
+   ollama pull llama3.2-vision
+   ```
+
+4. Set up the finetuned model: (Optional,not suggested to use)
+   ```bash
+   ollama create furniture_llama3.1 -f Main_LLM_model\model\Modelfile
+   ```
+   modify the main.py
+   ```python
+   LLM_MODEL = 'furniture_llama3.1:latest'
+   ```
+5. Modify main.py:
+   Adjust the email.
+   ```python
+    EMAIL_ADDR = 'example@gmail.com'      #the receiver
+    EMAIL_AGENT_ADDR = "example@gmail.com"      #agent email, google app passkey
+    EMAIL_AGENT_PASS = "password"
+   ```
+   Adjust the address to your desired setting. If set to 0.0.0.0, your server will be accessible to everyone. You might use [Zerotier](https://www.zerotier.com/) to setup the server
+   ```python
+     app.run(host="0.0.0.0", port=8080, debug=True)   
+   ```
+5. Run the server:  
+   ```bash
+   python main.py
    ```  
 
-5. Access the API at:  
+6. Access the API at:  
    ```plaintext
-   http://localhost:5000
+   http://localhost:8080
    ```  
 
 ---
@@ -233,6 +267,13 @@ homie/
 │   ├── sensor_log.json
 ├── iot_control
 │   ├── ESP32_receiver.ino
+│   ├── PhotoCapture.py
+├── Main_LLM_model
+│   ├── dataset
+│   │   ├── dataset.json
+│   ├── model
+│   │   ├── Modelfile
+│   │   ├── furniture_llama3.1.gguf
 │   ├── PhotoCapture.py
 └── README.md
 ```  
@@ -294,7 +335,7 @@ The test was conducted 50 times for each type of input.
 |          91%          |          76%           |
 
 ---
-## Future Enhancements  
+## Future Enhancements 
 
 1. **Authentication and Authorization**:  
    Implement user authentication to secure API endpoints.  
@@ -309,7 +350,10 @@ The test was conducted 50 times for each type of input.
    Integrate advanced vision models for more detailed image insights.  
 
 5. **Mobile App Integration**:  
-   Develop a mobile app for seamless interaction with Homie.  
+   Develop a mobile app for seamless interaction with Homie.
+
+6. **Enrich the dataset**
+   Fill more data to finetune the model
 
 ---
 
