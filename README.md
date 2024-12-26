@@ -140,7 +140,7 @@ html webpage
 2. **llama3.2-vision**
 3. **llama3.1:8b**
 4. **furniture_llama3.1:latest**
-   This model is tuned from llama3.1:8b, specifically tailored for this project. However, its performance is subpar. It's not recommended for use.
+   This model is tuned from llama3.1:8b, specifically tailored for this project. However, its performance is subpar. It's not recommended for use ;(.
    
 ---
 
