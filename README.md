@@ -59,14 +59,24 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
   ```json
-  {
-      "state": {
-          "sofa": "reclined",
-          "lights": "dimmed",
-          "ac": "22°C"
-      },
-      "reason": "User requested a relaxing evening setup."
-  }
+  [
+        {
+            "Reason": "Your explanation for the decisions, e.g., 'User wants to turn on all the light, and the temperature is too high, so the A/C is set to 24\u7c1eC.'"
+        },
+        {
+            "Smart Adjustable Bed": true,
+            "Smart Recliner": false,
+            "Smart Lamp": false,
+            "Smart Curtains": false,
+            "Smart Coffee Table": false,
+            "Smart Bookshelf": false,
+            "Smart Fan": false,
+            "Smart A/C": 24,
+            "Smart bathroom Light": true,
+            "Smart kitchen Light": true,
+            "Smart living room Light": true
+        }
+    ]
   ```  
 
 ### **3. `/update_sensor` (POST)**  
