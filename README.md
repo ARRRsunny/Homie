@@ -193,18 +193,18 @@ The following prompt techniques are used to guide Homie's decision-making:
   
 ### **2. Installation**  
 
-1. Clone the repository:  
+1. **Clone the repository**:  
    ```bash
    git clone https://github.com/your-repo/homie.git
    cd homie
    ```  
 
-2. Install dependencies:  
+2. **Install dependencies**:  
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Pull the Model:
+3. **Pull the Model**:
    ```bash
    ollama pull llama3.1
    ```
@@ -212,15 +212,17 @@ The following prompt techniques are used to guide Homie's decision-making:
    ollama pull llama3.2-vision
    ```
 
-4. Set up the finetuned model: (Optional,not suggested to use)
+4. **Set up the finetuned model**: (Optional,not suggested to use)
+
+   download the model from huggingface [download](https://huggingface.co/ARRRRRRRRRRRRR/furniture/resolve/main/furniture_llama3.1.gguf?download=true)
    ```bash
-   ollama create furniture_llama3.1 -f Main_LLM_model\model\Modelfile
+   ollama create furniture_llama3.1 -f your\model\path\model.gguf
    ```
    modify the main.py
    ```python
    LLM_MODEL = 'furniture_llama3.1:latest'
    ```
-5. Modify main.py:
+5. **Modify main.py**:
    Adjust the email.
    ```python
     EMAIL_ADDR = 'example@gmail.com'      #the receiver
@@ -231,17 +233,17 @@ The following prompt techniques are used to guide Homie's decision-making:
    ```python
      app.run(host="0.0.0.0", port=8080, debug=True)   
    ```
-6. Run the server:  
+6. **Run the server**:  
    ```bash
    python main.py
    ```
    
-7. Set your browser:  
+7. **Set your browser**:  
   Get camera permissions  
   go [chrome://flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure)  
   add the address
 
-6. Access the API at:  
+8. **Access the API at**:  
    ```plaintext
    http://localhost:8080
    ```  
