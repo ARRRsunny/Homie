@@ -192,21 +192,33 @@ The following prompt techniques are used to guide Homie's decision-making:
 2. Install dependencies:  
    ```bash
    pip install -r requirements.txt
-   ```  
+   ```
 
-3. Set up the initial prompt and logs:  
+3. Pull the Model:
    ```bash
-   python app.py
-   ```  
-
-4. Run the Flask app:  
+   ollama pull llama3.1
+   ```
    ```bash
-   python app.py
+   ollama pull llama3.2-vision
+   ```
+
+4. Set up the finetuned model: (Optional,not suggested to use)
+   ```bash
+   ollama create furniture_llama3.1 -f Main_LLM_model\model\Modelfile
+   ```
+   modify the main.py
+   ```python
+   LLM_MODEL = 'furniture_llama3.1:latest'
+   ```
+  
+5. Run the server:  
+   ```bash
+   python main.py
    ```  
 
-5. Access the API at:  
+6. Access the API at:  
    ```plaintext
-   http://localhost:5000
+   http://localhost:8080
    ```  
 
 ---
