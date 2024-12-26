@@ -352,7 +352,7 @@ The test was conducted 50 times for each type of input.
 5. **Mobile App Integration**:  
    Develop a mobile app for seamless interaction with Homie.
 
-6. **Enrich the dataset**
+6. **Enrich the dataset**:  
    Fill more data to finetune the model
 
 ---
@@ -365,4 +365,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ## Author  
 
-Developed by [ARRRsunny](https://github.com/ARRRsunny). Contributions are welcome!
+Developed by [ARRRsunny](https://github.com/ARRRsunny) and [EVBAS](https://github.com/EVBAS). Contributions are welcome!
