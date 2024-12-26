@@ -139,6 +139,8 @@ html webpage
 1. **yolo11m**
 2. **llama3.2-vision**
 3. **llama3.1:8b**
+4. **furniture_llama3.1:latest**
+   This model is tuned from llama3.1:8b, specifically tailored for this project. However, its performance is subpar. It's not recommended for use.
    
 ---
 
@@ -234,6 +236,13 @@ homie/
 ├── iot_control
 │   ├── ESP32_receiver.ino
 │   ├── PhotoCapture.py
+├── Main_LLM_model
+│   ├── dataset
+│   │   ├── dataset.json
+│   ├── model
+│   │   ├── Modelfile
+│   │   ├── furniture_llama3.1.gguf
+│   ├── PhotoCapture.py
 └── README.md
 ```  
 
@@ -294,7 +303,7 @@ The test was conducted 50 times for each type of input.
 |          91%          |          76%           |
 
 ---
-## Future Enhancements  
+## Future Enhancements 
 
 1. **Authentication and Authorization**:  
    Implement user authentication to secure API endpoints.  
@@ -309,7 +318,10 @@ The test was conducted 50 times for each type of input.
    Integrate advanced vision models for more detailed image insights.  
 
 5. **Mobile App Integration**:  
-   Develop a mobile app for seamless interaction with Homie.  
+   Develop a mobile app for seamless interaction with Homie.
+
+6. **Enrich the dataset**
+   Fill more data to finetune the model
 
 ---
 
