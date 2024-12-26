@@ -236,10 +236,11 @@ The following prompt techniques are used to guide Homie's decision-making:
    python main.py
    ```
    
-7. Set your browser:
-   Get camera permissions
-   go [chrome://flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure)
-   add the address
+7. Set your browser:  
+  Get camera permissions  
+  go [chrome://flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure)  
+  add the address
+
 6. Access the API at:  
    ```plaintext
    http://localhost:8080
