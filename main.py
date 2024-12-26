@@ -21,7 +21,14 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 app = Flask(__name__)
 CORS(app)
 
+#model used
 model = YOLO("yolo11m.pt")
+
+
+LLM_MODEL = 'llama3.1:8b'
+#LLM_MODEL = 'furniture_llama3.1:latest'    #tuned model
+LLM_VISION_MODEL = 'llama3.2-vision'
+
 # Define paths for logs and uploaded files
 FURNITURE_LOG_PATH = 'logs/furniture_state_log.json'
 SENSOR_LOG_PATH = 'logs/sensor_log.json'
@@ -37,16 +44,19 @@ EMAIL_REPORT_PATH = 'Prompt/emailreportprompt.txt'
 CAP_IMAGE_PATH = 'cap/cap.jpg'
 PROCESSD_FILE_PATH = "cap/cap_processed.jpg"
 
-EMAIL_ADDR = '141c28@gmail.com'
-EMAIL_AGENT_ADDR = "homie9500@gmail.com"
-EMAIL_AGENT_PASS = "hgmo foiu diwl cfrj"
+EMAIL_ADDR = 'example@gmail.com'
+EMAIL_AGENT_ADDR = "example@gmail.com"
+EMAIL_AGENT_PASS = "password"
 
 REPORT_LOG_LENGHT = 10
+
 # Initialize conversation history
 history = []
 
+# weekly task
 scheduler = BackgroundScheduler()
 
+#############################file handling#############################
 def extract_content_inside_braces(text: str) -> str:
     """Extract content inside curly braces."""
     match = re.search(r'\[(.*?)\]', text, re.DOTALL)
@@ -70,18 +80,6 @@ def validate_json_format(json_string: str) -> bool:
         return True
     except json.JSONDecodeError:
         return False
-
-
-def send_query_to_model(prompt: str, history: List[Dict[str, str]]) -> str:
-    """Send a query to the AI model."""
-    try:
-        history.append({'role': 'user', 'content': prompt})
-        response = ollama.chat(model='llama3.1:8b', messages=history)
-        return response['message']['content']
-    except Exception as e:
-        logging.error(f"Error during model interaction: {e}")
-        raise
-
 
 def load_furniture_state_log(log_path: str) -> List[Dict[str, str]]:
     """Load the log file that tracks furniture state changes."""
@@ -153,13 +151,24 @@ def validate_sensor_data(sensor_data: Dict[str, float]) -> bool:
         return False
     return True
 
+############################Model handling#############################
+def send_query_to_model(prompt: str, history: List[Dict[str, str]]) -> str:
+    """Send a query to the AI model."""
+    try:
+        history.append({'role': 'user', 'content': prompt})
+        response = ollama.chat(model=LLM_MODEL, messages=history)
+        return response['message']['content']
+    except Exception as e:
+        logging.error(f"Error during model interaction: {e}")
+        raise
+
 
 def cap_analyze(cap_path: str) -> str:
     """Analyze an uploaded photo using the AI model."""
     try:
         content = load_content_from_file(CAP_PROMPT_PATH)
         response = ollama.chat(
-            model='llama3.2-vision',
+            model= LLM_VISION_MODEL,
             messages=[{
                 'role': 'user',
                 'content': content,
@@ -187,11 +196,6 @@ def construct_prompt(user_input: str, furniture_state: Dict, sensor_value: Dict,
     cap_description_str = f"\n-Camera image description: {cap_description}" if cap_description else ""
     return f"-User input: {user_input}{furniture_state_str}{sensor_value_str}{cap_description_str}\nPlease make an appropriate furniture control."
 
-def trim_history(history):
-    if len(history) > 5:
-        # Keep the first (initial prompt) and the last 5 entries
-        return [history[0]] + history[-5:]
-    return history
 
 def predicting(img, save_new_img_path, conf = 0.4, marks=[], Save_new_photo = False, corner = False, classes=[]):  
     global model
@@ -239,7 +243,50 @@ def load_reminder_content(Reminder_path: str,id:str) -> str:
         return data[id]
     except Exception as e:
         raise Exception(f"An unexpected error occurred: {e}") from e
+    
+def trim_history(history):
+    if len(history) > 5:
+        # Keep the first (initial prompt) and the last 5 entries
+        return [history[0]] + history[-5:]
+    return history
 
+def weekly_task():
+    logging.debug("prepare weekly report")
+    send_weekly_report(EMAIL_AGENT_ADDR,EMAIL_AGENT_PASS,EMAIL_ADDR)
+
+def send_weekly_report(email_user, email_pass, email_receiver):
+    logging.debug(email_receiver)
+    msg = MIMEMultipart()
+    msg['From'] = email_user
+    msg['To'] = email_receiver
+    msg['Subject'] = 'Weekly Report'
+
+    body = LLM_intergated_Report()
+    logging.debug(body)
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(email_user, email_pass)
+            server.send_message(msg)
+            logging.debug("Report sent")
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+
+def LLM_intergated_Report():
+    data = load_furniture_state_log(FURNITURE_LOG_PATH)
+    data = data[-REPORT_LOG_LENGHT:] if len(data) >= REPORT_LOG_LENGHT else data
+    propmt = load_content_from_file(EMAIL_REPORT_PATH)
+    combine_prompt = f"{propmt}here are the recent users' action log:{data}"
+    logging.debug(combine_prompt)
+    response = ollama.chat(model=LLM_MODEL, messages=[{'role': 'user','content': combine_prompt}])
+    logging.debug(response)
+    generated_report = response['message']['content']
+    logging.debug(generated_report)
+    return generated_report
+
+############################Flask server#############################
 #main user request
 @app.route('/send_query', methods=['POST'])
 def send_query():
@@ -278,41 +325,6 @@ def send_query():
         return jsonify({"error": str(e)}), 500
     
 
-def weekly_task():
-    logging.debug("prepare weekly report")
-    send_weekly_report(EMAIL_AGENT_ADDR,EMAIL_AGENT_PASS,EMAIL_ADDR)
-
-def send_weekly_report(email_user, email_pass, email_receiver):
-    logging.debug(email_receiver)
-    msg = MIMEMultipart()
-    msg['From'] = email_user
-    msg['To'] = email_receiver
-    msg['Subject'] = 'Weekly Report'
-
-    body = LLM_intergated_Report()
-    logging.debug(body)
-    msg.attach(MIMEText(body, 'plain'))
-
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(email_user, email_pass)
-            server.send_message(msg)
-            logging.debug("Report sent")
-    except Exception as e:
-        logging.error(f"Failed to send email: {e}")
-
-def LLM_intergated_Report():
-    data = load_furniture_state_log(FURNITURE_LOG_PATH)
-    data = data[-REPORT_LOG_LENGHT:] if len(data) >= REPORT_LOG_LENGHT else data
-    propmt = load_content_from_file(EMAIL_REPORT_PATH)
-    combine_prompt = f"{propmt}here are the recent users' action log:{data}"
-    logging.debug(combine_prompt)
-    response = ollama.chat(model='llama3.1:8b', messages=[{'role': 'user','content': combine_prompt}])
-    logging.debug(response)
-    generated_report = response['message']['content']
-    logging.debug(generated_report)
-    return generated_report
 
 #fetch furniture state
 @app.route('/get_report', methods=['GET'])
@@ -380,6 +392,27 @@ def upload_photo():
         logging.error(f"Error uploading photo: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/send_email_reminder/<id>', methods=['GET'])
+def send_email(id):
+    logging.debug(EMAIL_ADDR)
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_AGENT_ADDR
+    msg['To'] = EMAIL_ADDR
+    msg['Subject'] = 'EMERGENCY'
+
+    body = load_reminder_content(REMINDER_CONTENT_PATH,id)
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(EMAIL_AGENT_ADDR, EMAIL_AGENT_PASS)
+            server.send_message(msg)
+            logging.debug("Report sent")
+            return jsonify({'message': 'Email sent successfully'})
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return jsonify({'error': f"Failed to send email: {e}"})
 
 @app.route('/', methods=['GET'])
 def serve_html():
@@ -403,29 +436,7 @@ def serve_test_panel():
         logging.error("Error serving HTML: %s", e)
         abort(500, "Internal server error")
 
-@app.route('/send_email_reminder/<id>', methods=['GET'])
-def send_email(id):
-    logging.debug(EMAIL_ADDR)
-    msg = MIMEMultipart()
-    msg['From'] = EMAIL_AGENT_ADDR
-    msg['To'] = EMAIL_ADDR
-    msg['Subject'] = 'EMERGENCY'
-
-    body = load_reminder_content(REMINDER_CONTENT_PATH,id)
-    msg.attach(MIMEText(body, 'plain'))
-
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(EMAIL_AGENT_ADDR, EMAIL_AGENT_PASS)
-            server.send_message(msg)
-            logging.debug("Report sent")
-            return jsonify({'message': 'Email sent successfully'})
-    except Exception as e:
-        logging.error(f"Failed to send email: {e}")
-        return jsonify({'error': f"Failed to send email: {e}"})
-
-
+##########################Set up##############################
 def setup():
     try:
         initial_prompt = f"{load_content_from_file(PROMPT_FILE_PATH)}{load_content_from_file(USER_PROFILE_PATH)}{load_content_from_file(FURNITURE_LIST_PATH)}\n*Current furniture state:{get_latest_furniture_state(FURNITURE_LOG_PATH)}"

@@ -35,7 +35,7 @@ Smart Coffee Table
 Smart Bookshelf
 Smart Fan
 Smart A/C
-Smart Lights (e.g., Light A, Light B, Light C)
+Smart Lights (e.g., bathroom Light ,kitchen Light,living room Light)
 
 Task:
 Analyze the Input: Use the provided sensor data, camera image description, and user profile to assess the current state of the home and the user's needs.
@@ -52,7 +52,7 @@ Output Format:
 Your output must be a JSON object only. Do not include any additional text, explanations, or formatting outside the JSON structure. The JSON object should follow this format:
 [
   {
-    "Reason": "Your explanation for the decisions, e.g., 'User wants to turn on the light, and the temperature is too high, so the A/C is set to 24°C.'"
+    "Reason": "Your explanation for the decisions, e.g., 'User wants to turn on all the light, and the temperature is too high, so the A/C is set to 24°C.'"
   },
   {
     "Smart Adjustable Bed": true,
@@ -64,9 +64,9 @@ Your output must be a JSON object only. Do not include any additional text, expl
     "Smart Bookshelf": false,
     "Smart Fan": true,
     "Smart A/C": 24,
-    "Smart Light A": true,
-    "Smart Light B": true,
-    "Smart Light C": true
+    "Smart bathroom Light": true,
+    "Smart kitchen Light": true,
+    "Smart living room Light": true
   }
 ]
 
@@ -99,9 +99,9 @@ Example Output:
     "Smart Bookshelf": false,
     "Smart Fan": true,
     "Smart A/C": 24,
-    "Smart Light A": true,
-    "Smart Light B": true,
-    "Smart Light C": true
+    "Smart bathroom Light": true,
+    "Smart kitchen Light": true,
+    "Smart living room Light": true
   }
 ]
 Notes:
