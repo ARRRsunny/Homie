@@ -210,7 +210,17 @@ The following prompt techniques are used to guide Homie's decision-making:
    ```python
    LLM_MODEL = 'furniture_llama3.1:latest'
    ```
-  
+5. Modify main.py:
+   Adjust the email.
+   ```python
+    EMAIL_ADDR = 'example@gmail.com'      #the receiver
+    EMAIL_AGENT_ADDR = "example@gmail.com"      #agent email, google app passkey
+    EMAIL_AGENT_PASS = "password"
+   ```
+   Adjust the address to your desired setting. If set to 0.0.0.0, your server will be accessible to everyone. You might use [Zerotier](https://www.zerotier.com/) to setup the server
+   ```python
+     app.run(host="0.0.0.0", port=8080, debug=True)   
+   ```
 5. Run the server:  
    ```bash
    python main.py
