@@ -116,14 +116,14 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
 html webpage
-![userpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/userpanel.png)
+![userpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/userpanel.png)
 
 ### **6. `/test_panel` (GET)**  
 **Description:** Enter test panel.  
 
 - **Response:**  
 html webpage
-![testpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/testpanel.png)
+![testpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/testpanel.png)
 
 ### **7. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
@@ -231,10 +231,15 @@ The following prompt techniques are used to guide Homie's decision-making:
    ```python
      app.run(host="0.0.0.0", port=8080, debug=True)   
    ```
-5. Run the server:  
+6. Run the server:  
    ```bash
    python main.py
-   ```  
+   ```
+   
+7. Set your browser:  
+  Get camera permissions  
+  go [chrome://flags/#unsafely-treat-insecure-origin-as-secure](chrome://flags/#unsafely-treat-insecure-origin-as-secure)  
+  add the address
 
 6. Access the API at:  
    ```plaintext
@@ -352,7 +357,7 @@ The test was conducted 50 times for each type of input.
 5. **Mobile App Integration**:  
    Develop a mobile app for seamless interaction with Homie.
 
-6. **Enrich the dataset**
+6. **Enrich the dataset**:  
    Fill more data to finetune the model
 
 ---
@@ -365,4 +370,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ## Author  
 
-Developed by [ARRRsunny](https://github.com/ARRRsunny). Contributions are welcome!
+Developed by [ARRRsunny](https://github.com/ARRRsunny) and [EVBAS](https://github.com/EVBAS). Contributions are welcome!
