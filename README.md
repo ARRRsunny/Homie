@@ -116,14 +116,14 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
 html webpage
-![userpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/userpanel.png)
+![userpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/userpanel.png)
 
 ### **6. `/test_panel` (GET)**  
 **Description:** Enter test panel.  
 
 - **Response:**  
 html webpage
-![testpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/testpanel.png)
+![testpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/testpanel.png)
 
 ### **7. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
