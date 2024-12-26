@@ -85,10 +85,8 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 - **Request Body:**  
   ```json
   {
-      "sensor_data": {
-          "temperature": 25,
-          "humidity": 0.45
-      }
+    "temperature": 32,
+    "humidity": 0.5
   }
   ```  
 
@@ -118,12 +116,14 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Response:**  
 html webpage
+![userpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/userpanel.png)
 
 ### **6. `/test_panel` (GET)**  
 **Description:** Enter test panel.  
 
 - **Response:**  
 html webpage
+![testpanel](https://github.com/ARRRsunnyHomie/blob/main/assets/testpanel.png)
 
 ### **7. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
