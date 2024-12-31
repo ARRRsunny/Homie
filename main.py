@@ -14,6 +14,7 @@ import cv2 as cv
 import urllib.request as ul
 from apscheduler.schedulers.background import BackgroundScheduler
 
+
 # Set up logging for debugging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -472,6 +473,7 @@ def setup():
             furniture_state = json.loads(extracted_result)
             add_furniture_state_to_log(FURNITURE_LOG_PATH, furniture_state)
             logging.debug(f"Model's Initial Response:{extracted_result}")
+
         else:
             logging.warning("Model response is not in valid JSON format.")
     except Exception as e:
@@ -486,4 +488,10 @@ def setup():
 if __name__ == "__main__":    
     scheduler.add_job(weekly_task, 'cron', day_of_week='sun', hour=20, minute=0)    #Sunday 8.00pm sent report
     setup()
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    #host = "0.0.0.0"
+    host = "127.0.0.1"  
+    port = 8080 #not recommended to change the port
+    logging.info(f"User Panel: http://{host}:{port}") 
+    logging.info(f"Voice control Panel: http://{host}:{port}/VoiceContorl")
+    logging.info(f"Test Panel: http://{host}:{port}/test_panel")
+    app.run(host=host, port=port, debug=True)
