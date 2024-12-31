@@ -436,6 +436,17 @@ def serve_test_panel():
         logging.error("Error serving HTML: %s", e)
         abort(500, "Internal server error")
 
+@app.route('/VoiceContorl', methods=['GET'])
+def serve_voice_panel():
+    try:
+        url = "https://raw.githubusercontent.com/ARRRsunny/Homie/refs/heads/main/speech2text.html"
+        with ul.urlopen(url) as client:
+            htmldata = client.read().decode('utf-8')
+        return htmldata
+    except Exception as e:
+        logging.error("Error serving HTML: %s", e)
+        abort(500, "Internal server error")
+
 ##########################Set up##############################
 def setup():
     try:
