@@ -371,11 +371,6 @@ The test was conducted 50 times for each type of input.
 6. **Enrich the dataset**:  
    Fill more data to finetune the model
 
----
-
-## License  
-
-This project is licensed under the MIT License. See the `LICENSE` file for more details.  
 
 --- 
 
