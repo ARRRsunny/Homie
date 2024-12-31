@@ -29,7 +29,9 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 
 - **Immediate Reminder**:  
   Send an urgent reminder when danger occurs.
-  
+
+- **Voice Control**
+  Send request by speaking.
 ---
 
 ## API Endpoints  
@@ -125,7 +127,14 @@ html webpage
 html webpage
 ![testpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/testpanel.png)
 
-### **7. `/send_email_reminder/<id>` (GET)**  
+### **7. `/VoiceContorl` (GET)**  
+**Description:** Enter voice control panel.  
+
+- **Response:**  
+html webpage
+![testpanel](https://github.com/ARRRsunny/Homie/blob/main/assets/voicepanel.png)
+
+### **8. `/send_email_reminder/<id>` (GET)**  
 **Description:** send an email reminder to the user.  
 
 - **Response:**
@@ -134,7 +143,7 @@ html webpage
     {'message': 'Email sent successfully'}
     ```  
 
-### **8. `/get_report` (GET)**  
+### **9. `/get_report` (GET)**  
 **Description:** send an email about the weekly report of user.  
 
 - **Response:**
