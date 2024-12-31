@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siri-like Voice Assistant</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #444;
+    }
+
+    #status {
+      text-align: center;
+      font-size: 1.2em;
+      color: #555;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      border: 2px dashed #888;
+      background-color: #fff;
+      min-height: 100px;
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Voice Control</h1>
+  <div id="status">Say "Alex" to activate.</div>
+  <div id="output">Your speech will appear here...</div>
+  <p class="error" id="error"></p>
+
+  <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+
+      const baseAddress = `http://${window.location.hostname}:8080`;
+      const recognition = new SpeechRecognition();
+      const wakeWordRecognition = new SpeechRecognition();
+      const output = document.getElementById('output');
+      const status = document.getElementById('status');
+      const errorElement = document.getElementById('error');
+    
+      let isListening = false;
+      let wakeWord = "alex"; // Define the wake word here
+      let silenceTimeout;
+
+      // Initialize wake word recognition
+      wakeWordRecognition.continuous = true;
+      wakeWordRecognition.interimResults = true;
+      wakeWordRecognition.lang = 'en-US';
+
+      wakeWordRecognition.addEventListener('result', (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript.toLowerCase();
+        }
+
+        if (transcript.includes(wakeWord)) {
+          status.innerText = "Wake word detected! Start speaking...";
+          startMainRecognition();
+        }
+      });
+
+      wakeWordRecognition.addEventListener('error', (event) => {
+        errorElement.innerText = `Error: ${event.error}`;
+      });
+
+      // Initialize main speech recognition
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.addEventListener('result', (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+
+        output.innerText = transcript;
+        resetSilenceTimeout();
+      });
+
+      recognition.addEventListener('end', () => {
+        if (isListening) {
+          recognition.start(); // Restart recognition if still active
+        }
+      });
+
+      recognition.addEventListener('error', (event) => {
+        errorElement.innerText = `Error: ${event.error}`;
+        stopMainRecognition();
+      });
+
+      // Functions to handle recognition states
+      function startMainRecognition() {
+        isListening = true;
+        wakeWordRecognition.stop();
+        recognition.start();
+        status.innerText = "Listening for your command...";
+        resetSilenceTimeout();
+      }
+
+      function stopMainRecognition() {
+        isListening = false;
+        recognition.stop();
+        do_command_when_stop()
+        wakeWordRecognition.start();
+        status.innerText = "Say 'Alex' to activate.";
+        clearTimeout(silenceTimeout);
+      }
+
+      function resetSilenceTimeout() {
+        clearTimeout(silenceTimeout);
+        
+        silenceTimeout = setTimeout(() => {
+          status.innerText = "Silence detected, stopping...";
+          stopMainRecognition();
+        }, 5000); // Stop after 5 seconds of silence
+      }
+
+
+      async function do_command_when_stop() {
+        const text = output.innerText.trim(); // Trim extra spaces or newlines
+
+        if (!text) {
+            errorElement.innerText = 'Error: No input text to process.';
+            return;
+        }
+
+        try {
+            // Send the text to the server
+            const response = await fetch(`${baseAddress}/send_query`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_input: text }),
+            });
+
+            // Parse the response
+            const data = await response.json();
+
+            // Handle server response
+            if (response.ok) {
+            errorElement.innerText = `Response: ${JSON.stringify(data.message || data, null, 2)}`;
+            } else {
+            errorElement.innerText = `Error: ${data.error || 'An unknown error occurred.'}`;
+            }
+        } catch (err) {
+            console.error('Error sending query:', err);
+            errorElement.innerText = 'Error: Unable to send query. Please check your connection or server.';
+        }
+        }
+      // Start wake word recognition
+      wakeWordRecognition.start();
+    } else {
+      document.getElementById('error').innerText = "Speech Recognition is not supported in this browser.";
+    }
+  </script>
+</body>
+</html>
