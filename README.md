@@ -30,7 +30,7 @@ Homie is an AI-powered system that integrates IoT-enabled furniture, environment
 - **Immediate Reminder**:  
   Send an urgent reminder when danger occurs.
 
-- **Voice Control**
+- **Voice Control**:  
   Send request by speaking.
 ---
 
